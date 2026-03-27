@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ApplyFlow AI — LinkedIn Auto Apply Assistant",
+  "version": "0.1.0",
+  "description": "Automatiza candidaturas Easy Apply no LinkedIn com filtros, IA (score) e dashboard.",
+  "action": {
+    "default_title": "ApplyFlow AI",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/jobs/*"],
+      "js": ["content/index.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+

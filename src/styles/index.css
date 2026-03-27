@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base visual (dark futurista) */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg-950 text-white antialiased;
+}
+
+* {
+  scrollbar-color: rgba(167, 139, 250, 0.35) rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+}
+
