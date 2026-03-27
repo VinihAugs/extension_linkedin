@@ -14,6 +14,7 @@ type UserConfig = {
   delayMinMs: number
   delayMaxMs: number
   automationEnabled: boolean
+  selectJobViaRowContainer: boolean
 }
 
 const STORAGE_KEYS = {
@@ -29,7 +30,8 @@ const DEFAULT_CONFIG: UserConfig = {
   dailyLimit: 20,
   delayMinMs: 2000,
   delayMaxMs: 8000,
-  automationEnabled: false
+  automationEnabled: false,
+  selectJobViaRowContainer: true
 }
 
 /** Entre passos dentro do modal (regra do usuário). */
@@ -166,8 +168,8 @@ function findEasyApplyInScope(root: ParentNode): HTMLElement | null {
 }
 
 /**
- * Foca a vaga no split view sem clicar em `<a href=".../jobs/view/...">` (evita navegação / aba nova).
- * Usa o container clicável do LinkedIn, se existir.
+ * Clica no container da linha (split view), evitando `<a href=".../jobs/view/...">` —
+ * não abre nova aba nem página inteira da vaga.
  */
 async function focusJobRowForDetailsPanel(row: HTMLElement) {
   const avoid = row.querySelectorAll<HTMLElement>('a[href*="/jobs/view/"], a.job-card-list__title--link')
@@ -189,9 +191,7 @@ async function focusJobRowForDetailsPanel(row: HTMLElement) {
 
   if (await tryClick(container)) return
 
-  const hit = row.querySelector<HTMLElement>(
-    "div[class*='job-card-list']:not(a)"
-  )
+  const hit = row.querySelector<HTMLElement>("div[class*='job-card-list']:not(a)")
   if (await tryClick(hit)) return
 
   await click(row)
@@ -480,8 +480,10 @@ async function loop() {
   loopInProgress = true
   processedJobIdsThisRun.clear()
 
-  await getConfig()
-  await log("Content script loop iniciado.")
+  const cfg = await getConfig()
+  await log("Content script loop iniciado.", {
+    selectJobViaRowContainer: cfg.selectJobViaRowContainer
+  })
 
   for (let i = 0; i < 60; i++) {
     if (
@@ -530,7 +532,8 @@ async function loop() {
         }
       }
 
-      if (!easyBtn) {
+      if (!easyBtn && cfg.selectJobViaRowContainer) {
+        await log("Selecionando vaga pelo container da linha (sem link do título).", { jobId })
         await focusJobRowForDetailsPanel(row)
         await sleep(randInt(400, 900))
         easyBtn =
@@ -539,7 +542,13 @@ async function loop() {
       }
 
       if (!easyBtn) {
-        await log("Pulando vaga", { motivo: "sem_easy_apply", jobId })
+        await log("Pulando vaga", {
+          motivo: cfg.selectJobViaRowContainer ? "sem_easy_apply" : "sem_easy_apply_visivel_sem_clique_no_card",
+          jobId,
+          nota: cfg.selectJobViaRowContainer
+            ? undefined
+            : "Ative em Opções: seleção pelo container da linha, ou alinhe o painel manualmente."
+        })
         processedJobIdsThisRun.add(jobId)
         if (!firstJob) await betweenJobsDelay()
         firstJob = false

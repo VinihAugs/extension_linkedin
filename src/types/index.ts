@@ -11,6 +11,11 @@ export type UserConfig = {
   delayMinMs: number
   delayMaxMs: number
   automationEnabled: boolean
+  /**
+   * Se true, clica no container da linha da lista (não no link do título) para alinhar o painel
+   * direito ao Easy Apply — mais candidaturas. Se false, só usa botões já visíveis.
+   */
+  selectJobViaRowContainer: boolean
   resumeFileName?: string
   openAiApiKey?: string
 }

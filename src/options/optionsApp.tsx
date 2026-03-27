@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Button, Card, Input } from "../shared/ui"
+import { Button, Card, Input, Toggle } from "../shared/ui"
 import type { UserConfig } from "../types"
 import { getBlockedCompanies, getConfig, setBlockedCompanies, setConfig } from "../storage/repo"
 
@@ -103,6 +103,15 @@ export function OptionsApp() {
                 }
                 placeholder="curriculo.pdf"
               />
+              <Toggle
+                checked={cfg.selectJobViaRowContainer ?? true}
+                onChange={(v) => saveCfg({ ...cfg, selectJobViaRowContainer: v })}
+                label="Automação forte: selecionar vaga pelo container da linha (sem abrir link do título)"
+              />
+              <p className="text-xs text-white/50">
+                Ativado: clica na área do card na lista para carregar o Easy Apply no painel direito —
+                mais candidaturas. Desativado: só clica em Easy Apply já visível (mais restrito).
+              </p>
             </div>
           </Card>
 

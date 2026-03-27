@@ -11,6 +11,7 @@ type UserConfig = {
   delayMinMs: number
   delayMaxMs: number
   automationEnabled: boolean
+  selectJobViaRowContainer: boolean
 }
 
 type AppliedJob = {
@@ -57,7 +58,8 @@ const DEFAULT_CONFIG: UserConfig = {
   dailyLimit: 20,
   delayMinMs: 2000,
   delayMaxMs: 8000,
-  automationEnabled: false
+  automationEnabled: false,
+  selectJobViaRowContainer: true
 }
 
 const DEFAULT_METRICS: Metrics = {
